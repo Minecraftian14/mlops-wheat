@@ -6,7 +6,6 @@ import pandas as pd
 import pytest
 import yaml
 from PIL import Image
-
 from wheat_mlops import prepare
 
 SIZE = 64

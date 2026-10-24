@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-
 from wheat_mlops import add_yolo_columns, clip_and_filter, parse_bboxes
 
 

@@ -25,3 +25,18 @@ stages:
     - data.val_fraction
     outs:
     - data\processed
+  build_model:
+    cmd: python -m wheat_mlops.build_model
+    deps:
+    - data\processed
+    - src\python\wheat_mlops\build_model.py
+    - src\python\wheat_mlops\config.py
+    params:
+    - model.base_checkpoint
+    - model.imgsz
+    - model.pretrained
+    outs:
+    - checkpoints\base\yolov8n_base.pt
+    metrics:
+    - checkpoints\base\model_info.json:
+        cache: false

@@ -14,6 +14,7 @@ data/raw/
 data/processed/
 *.pt
 checkpoints/**/*.json
+!checkpoints/**/model_info.json
 runs/
 mlruns/
 *.zip

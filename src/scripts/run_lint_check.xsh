@@ -1,1 +1,2 @@
-ruff format --check
+ruff check .
+ruff format --check .

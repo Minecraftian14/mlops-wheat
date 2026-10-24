@@ -13,7 +13,7 @@ Design notes
   every density level appears in both train and val.
 * Imports nothing heavy (no torch / ultralytics) so tests and CI can run it quickly.
 
-Usage:  python -m src.prepare_data
+Usage:  python -m wheat_mlops.prepare_data
 """
 
 from __future__ import annotations
@@ -124,7 +124,8 @@ def prepare(
     img_dir = raw_dir / "train"
     if not (raw_dir / "train.csv").is_file() or not img_dir.is_dir():
         raise FileNotFoundError(
-            f"Expected train.csv and train/ in {raw_dir}. Run `python -m src.download_data`."
+            f"Expected train.csv and train/ in {raw_dir}.\n"
+            "Run `python -m wheat_mlops.download_data`."
         )
     # out_dir is wiped on every run, so make sure it can never be (a parent of) raw_dir.
     if out_dir.resolve() == raw_dir.resolve() or out_dir.resolve() in raw_dir.resolve().parents:

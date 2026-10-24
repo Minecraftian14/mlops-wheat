@@ -3,7 +3,7 @@
 NO TRAINING happens here. This is the Part 1 deliverable: "the model can be created,
 is runnable, and a checkpoint is written to disk".
 
-Usage:  python -m src.build_model
+Usage:  python -m wheat_mlops.build_model
 """
 
 from __future__ import annotations
