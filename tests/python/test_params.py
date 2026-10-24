@@ -1,4 +1,4 @@
-from src.config import load_params
+from wheat_mlops.config import load_params
 
 
 def test_params_have_required_keys():

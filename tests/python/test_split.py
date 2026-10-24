@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.prepare_data import make_strata, split_ids
+from wheat_mlops import make_strata, split_ids
 
 
 def _images(n_per_source=40, sources=("s1", "s2", "s3")):

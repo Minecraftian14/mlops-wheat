@@ -15,7 +15,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-from src.config import load_params
+from wheat_mlops.config import load_params
 
 
 def is_downloaded(raw_dir: Path) -> bool:

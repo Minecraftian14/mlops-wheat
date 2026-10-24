@@ -12,7 +12,7 @@ import json
 import platform
 from pathlib import Path
 
-from src.config import load_params
+from wheat_mlops.config import load_params
 
 
 def build(pretrained: str | Path, base_checkpoint: str | Path, imgsz: int) -> dict:

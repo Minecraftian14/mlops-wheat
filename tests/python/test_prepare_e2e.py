@@ -7,7 +7,7 @@ import pytest
 import yaml
 from PIL import Image
 
-from src.prepare_data import prepare
+from wheat_mlops import prepare
 
 SIZE = 64
 

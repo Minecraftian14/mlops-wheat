@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from src.prepare_data import add_yolo_columns, clip_and_filter, parse_bboxes
+from wheat_mlops import add_yolo_columns, clip_and_filter, parse_bboxes
 
 
 def _boxes(rows):

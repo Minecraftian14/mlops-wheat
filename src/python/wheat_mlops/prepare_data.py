@@ -28,7 +28,7 @@ import pandas as pd
 import yaml
 from sklearn.model_selection import train_test_split
 
-from src.config import load_params
+from wheat_mlops.config import load_params
 
 
 def parse_bboxes(df: pd.DataFrame) -> pd.DataFrame:
