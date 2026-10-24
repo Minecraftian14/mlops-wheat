@@ -17,6 +17,9 @@ checkpoints/**/*.json
 !checkpoints/**/model_info.json
 runs/
 mlruns/
+mlflow.db
+*.db
+*.sqlite
 *.zip
 
 # Secrets and editor noise
