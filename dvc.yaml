@@ -8,3 +8,20 @@ stages:
     - data.raw_dir
     outs:
     - data\raw
+  prepare_data:
+    cmd: python -m wheat_mlops.prepare_data
+    deps:
+    - data\raw
+    - src\python\wheat_mlops\config.py
+    - src\python\wheat_mlops\prepare_data.py
+    params:
+    - data.count_bucket
+    - data.link_images
+    - data.max_box_area
+    - data.max_count_bucket
+    - data.min_box_area
+    - data.processed_dir
+    - data.seed
+    - data.val_fraction
+    outs:
+    - data\processed

@@ -17,3 +17,35 @@ stages:
       md5: 301781641131f70237314d797c7a7760.dir
       size: 643571148
       nfiles: 3434
+  prepare_data:
+    cmd: python -m wheat_mlops.prepare_data
+    deps:
+    - path: data\raw
+      hash: md5
+      md5: 301781641131f70237314d797c7a7760.dir
+      size: 643571148
+      nfiles: 3434
+    - path: src\python\wheat_mlops\config.py
+      hash: md5
+      md5: 198e954cfa3f3cce88552db8a660a36d
+      size: 252
+    - path: src\python\wheat_mlops\prepare_data.py
+      hash: md5
+      md5: 62e26413141c8c4662b0bcd49625006c
+      size: 8540
+    params:
+      params.yaml:
+        data.count_bucket: 15
+        data.link_images: true
+        data.max_box_area: 100000
+        data.max_count_bucket: 6
+        data.min_box_area: 100
+        data.processed_dir: data/processed
+        data.seed: 42
+        data.val_fraction: 0.2
+    outs:
+    - path: data\processed
+      hash: md5
+      md5: ef1255f5d633687400eea1b82fd03d5f.dir
+      size: 639225058
+      nfiles: 6847

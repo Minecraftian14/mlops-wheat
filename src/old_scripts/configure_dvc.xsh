@@ -14,3 +14,15 @@ dvc stage add \
 
 dvc repro
 dvc push
+
+dvc stage add \
+    -n prepare_data \
+    -p data.processed_dir,data.val_fraction,data.seed,data.count_bucket,data.max_count_bucket,data.min_box_area,data.max_box_area,data.link_images \
+    -d src\python\wheat_mlops\config.py \
+    -d src\python\wheat_mlops\prepare_data.py \
+    -d data\raw \
+    -o data\processed \
+    python -m wheat_mlops.prepare_data
+
+dvc repro
+dvc push
