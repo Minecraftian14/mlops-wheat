@@ -13,7 +13,7 @@ Design notes
   every density level appears in both train and val.
 * Imports nothing heavy (no torch / ultralytics) so tests and CI can run it quickly.
 
-Usage:  python -m src.prepare_data
+Usage:  python -m wheat_mlops.prepare_data
 """
 
 from __future__ import annotations
@@ -124,7 +124,8 @@ def prepare(
     img_dir = raw_dir / "train"
     if not (raw_dir / "train.csv").is_file() or not img_dir.is_dir():
         raise FileNotFoundError(
-            f"Expected train.csv and train/ in {raw_dir}. Run `python -m src.download_data`."
+            f"Expected train.csv and train/ in {raw_dir}.\n"
+            "Run `python -m wheat_mlops.download_data`."
         )
     # out_dir is wiped on every run, so make sure it can never be (a parent of) raw_dir.
     if out_dir.resolve() == raw_dir.resolve() or out_dir.resolve() in raw_dir.resolve().parents:
@@ -207,11 +208,47 @@ def prepare(
     return stats
 
 
+def log_to_mlflow(stats: dict, data_params: dict, out_dir: Path) -> None:
+    """Log data preparation parameters, scalar metrics, and dataset artifacts to MLflow."""
+    import mlflow
+
+    for k, v in data_params.items():
+        if isinstance(v, (int, float, str, bool)):
+            mlflow.log_param(f"data.{k}", v)
+
+    mlflow.log_metrics(
+        {
+            "data.n_images": stats["n_images"],
+            "data.n_train": stats["n_train"],
+            "data.n_val": stats["n_val"],
+            "data.n_background_images": stats["n_background_images"],
+            "data.n_boxes_raw": stats["n_boxes_raw"],
+            "data.n_boxes_kept": stats["n_boxes_kept"],
+            "data.n_boxes_dropped": stats["n_boxes_dropped"],
+            "data.boxes_per_image_mean": float(stats["boxes_per_image_mean"]),
+        }
+    )
+
+    for filename in ("dataset.yaml", "prepare_stats.json", "split.csv"):
+        file_path = out_dir / filename
+        if file_path.is_file():
+            mlflow.log_artifact(str(file_path), artifact_path="data")
+
+
 def main() -> None:
-    p = load_params()["data"]
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--track", action="store_true", help="Log this run directly to MLflow")
+    parser.add_argument("--params", default="params.yaml", help="Path to params.yaml")
+    args = parser.parse_args()
+
+    params = load_params(args.params)
+    p = params["data"]
+    out_dir = Path(p["processed_dir"])
     stats = prepare(
         raw_dir=p["raw_dir"],
-        out_dir=p["processed_dir"],
+        out_dir=out_dir,
         val_fraction=p["val_fraction"],
         seed=p["seed"],
         count_bucket=p["count_bucket"],
@@ -221,6 +258,18 @@ def main() -> None:
         link_images=p["link_images"],
     )
     print(json.dumps(stats, indent=2))
+
+    if args.track:
+        import mlflow
+
+        mlflow_cfg = params.get("mlflow", {})
+        if "tracking_uri" in mlflow_cfg:
+            mlflow.set_tracking_uri(mlflow_cfg["tracking_uri"])
+        if "experiment_name" in mlflow_cfg:
+            mlflow.set_experiment(mlflow_cfg["experiment_name"])
+
+        with mlflow.start_run(run_name="prepare_data"):
+            log_to_mlflow(stats, p, out_dir)
 
 
 if __name__ == "__main__":

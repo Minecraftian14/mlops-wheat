@@ -3,7 +3,7 @@
 NO TRAINING happens here. This is the Part 1 deliverable: "the model can be created,
 is runnable, and a checkpoint is written to disk".
 
-Usage:  python -m src.build_model
+Usage:  python -m wheat_mlops.build_model
 """
 
 from __future__ import annotations
@@ -58,10 +58,53 @@ def build(pretrained: str | Path, base_checkpoint: str | Path, imgsz: int) -> di
     return info
 
 
+def log_to_mlflow(info: dict, model_params: dict) -> None:
+    """Log model parameters, metrics, and checkpoint artifacts to MLflow."""
+    import mlflow
+
+    for k, v in model_params.items():
+        if isinstance(v, (int, float, str, bool)):
+            mlflow.log_param(f"model.{k}", v)
+
+    mlflow.log_metrics(
+        {
+            "model.n_parameters": float(info["n_parameters"]),
+            "model.checkpoint_size_mb": float(info["checkpoint_size_mb"]),
+        }
+    )
+
+    base_checkpoint = Path(info["base_checkpoint"])
+    if base_checkpoint.is_file():
+        mlflow.log_artifact(str(base_checkpoint), artifact_path="checkpoints")
+    info_json = base_checkpoint.parent / "model_info.json"
+    if info_json.is_file():
+        mlflow.log_artifact(str(info_json), artifact_path="checkpoints")
+
+
 def main() -> None:
-    m = load_params()["model"]
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--track", action="store_true", help="Log this run directly to MLflow")
+    parser.add_argument("--params", default="params.yaml", help="Path to params.yaml")
+    args = parser.parse_args()
+
+    params = load_params(args.params)
+    m = params["model"]
     info = build(m["pretrained"], m["base_checkpoint"], m["imgsz"])
     print(json.dumps(info, indent=2))
+
+    if args.track:
+        import mlflow
+
+        mlflow_cfg = params.get("mlflow", {})
+        if "tracking_uri" in mlflow_cfg:
+            mlflow.set_tracking_uri(mlflow_cfg["tracking_uri"])
+        if "experiment_name" in mlflow_cfg:
+            mlflow.set_experiment(mlflow_cfg["experiment_name"])
+
+        with mlflow.start_run(run_name="build_model"):
+            log_to_mlflow(info, m)
 
 
 if __name__ == "__main__":

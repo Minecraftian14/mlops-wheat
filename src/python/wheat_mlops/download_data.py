@@ -3,7 +3,7 @@
 Requires the Kaggle CLI to be authenticated and the competition rules to be accepted
 on the Kaggle website (click "Join Competition" once).
 
-Usage:  python -m src.download_data [--force]
+Usage:  python -m wheat_mlops.download_data [--force]
 """
 
 from __future__ import annotations

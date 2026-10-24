@@ -1,0 +1,18 @@
+name: wheat-mlops
+
+entry_points:
+  main:
+    parameters:
+      params_path: {type: str, default: "params.yaml"}
+      run_name: {type: str, default: "pipeline-a-run"}
+    command: "python -m wheat_mlops.pipeline --params {params_path} --run-name {run_name}"
+
+  prepare_data:
+    parameters:
+      params_path: {type: str, default: "params.yaml"}
+    command: "python -m wheat_mlops.prepare_data --track --params {params_path}"
+
+  build_model:
+    parameters:
+      params_path: {type: str, default: "params.yaml"}
+    command: "python -m wheat_mlops.build_model --track --params {params_path}"
