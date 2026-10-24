@@ -1,0 +1,18 @@
+# Single source of truth for paths and parameters.
+# Every script reads this file; nothing is hard-coded in the code.
+data:
+  competition: global-wheat-detection
+  raw_dir: data/raw              # download target (train.csv + train/)
+  processed_dir: data/processed  # YOLO-format dataset written by prepare_data
+  val_fraction: 0.2
+  seed: 42
+  count_bucket: 15               # boxes-per-image bucket width used for stratification
+  max_count_bucket: 6            # cap the number of buckets so strata do not get too small
+  min_box_area: 100              # px^2 on the 1024x1024 image; smaller boxes are dropped
+  max_box_area: 100000           # px^2; larger boxes are dropped (label errors)
+  link_images: true              # hard-link instead of copy (falls back to copy)
+
+model:
+  pretrained: checkpoints/pretrained/yolov8n.pt    # downloaded automatically on first run
+  base_checkpoint: checkpoints/base/yolov8n_base.pt
+  imgsz: 640                     # must be a multiple of 32
