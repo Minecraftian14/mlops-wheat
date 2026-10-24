@@ -37,6 +37,7 @@ select = ["E", "F", "I", "B"]
 
 [dependency-groups]
 dev = [
+    "dvc>=3.67.1",
     "kaggle>=1.6",
     "numpy>=1.24",
     "pandas>=2.0",
