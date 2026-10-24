@@ -1,0 +1,10 @@
+stages:
+  download_data:
+    cmd: python -m wheat_mlops.download_data
+    deps:
+    - src\python\wheat_mlops\download_data.py
+    params:
+    - data.competition
+    - data.raw_dir
+    outs:
+    - data\raw

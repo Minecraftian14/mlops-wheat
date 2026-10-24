@@ -1,0 +1,19 @@
+schema: '2.0'
+stages:
+  download_data:
+    cmd: python -m wheat_mlops.download_data
+    deps:
+    - path: src\python\wheat_mlops\download_data.py
+      hash: md5
+      md5: e835999c8d4a0115cedc4c4ce04704a4
+      size: 2369
+    params:
+      params.yaml:
+        data.competition: global-wheat-detection
+        data.raw_dir: data/raw
+    outs:
+    - path: data\raw
+      hash: md5
+      md5: 301781641131f70237314d797c7a7760.dir
+      size: 643571148
+      nfiles: 3434
