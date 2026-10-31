@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wheat-api
+  namespace: wheat-mlops
+  labels:
+    app: wheat-api
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: wheat-api
+  template:
+    metadata:
+      labels:
+        app: wheat-api
+    spec:
+      containers:
+        - name: api
+          image: wheat-mlops:0.2.0
+          imagePullPolicy: Never   # the image is loaded into minikube, there is no registry
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: MODEL_VERSION
+              value: "yolov8s-v1"
+            - name: INFERENCE_THREADS
+              value: "2"
+            - name: CORS_ORIGINS
+              value: "*"
+            - name: NGROK_AUTHTOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: wheat-api-secrets
+                  key: NGROK_AUTHTOKEN
+                  optional: true
+            - name: NGROK_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: wheat-api-secrets
+                  key: NGROK_DOMAIN
+                  optional: true
+          startupProbe:            # the model takes a while to load on a slow CPU
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 36
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 3Gi
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]

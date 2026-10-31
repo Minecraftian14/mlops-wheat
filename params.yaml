@@ -16,3 +16,8 @@ model:
   pretrained: checkpoints/pretrained/yolov8n.pt    # downloaded automatically on first run
   base_checkpoint: checkpoints/base/yolov8n_base.pt
   imgsz: 640                     # must be a multiple of 32
+
+mlflow:
+  tracking_uri: "sqlite:///mlflow.db"
+  experiment_name: "wheat-mlops-pipeline-a"
+

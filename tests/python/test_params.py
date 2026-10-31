@@ -15,6 +15,8 @@ def test_params_have_required_keys():
         assert key in p["data"]
     for key in ("pretrained", "base_checkpoint", "imgsz"):
         assert key in p["model"]
+    for key in ("tracking_uri", "experiment_name"):
+        assert key in p["mlflow"]
 
 
 def test_params_are_sane():
